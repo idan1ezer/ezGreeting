@@ -5,13 +5,21 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ezgreeting.R;
 import com.example.ezgreeting.util.Validator;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -25,14 +33,14 @@ public class RegisterActivity extends AppCompatActivity {
     private TextInputLayout[] allFields;
     private MaterialButton reg_BTN_register;
 
-//    private FirebaseAuth fAuth;
+    private FirebaseAuth fAuth;
     private String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-//        fAuth = FirebaseAuth.getInstance();
+        fAuth = FirebaseAuth.getInstance();
 
         findViews();
         initBTNs();
@@ -99,27 +107,27 @@ public class RegisterActivity extends AppCompatActivity {
 
 //        FirebaseDatabase database = FirebaseDatabase.getInstance("https://weshare-70609-default-rtdb.firebaseio.com/");
 //        DatabaseReference myRef = database.getReference("users");
-//
-//        fAuth.createUserWithEmailAndPassword(reg_EDT_email.getEditText().getText().toString(), reg_EDT_password.getEditText().getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//            @Override
-//            public void onComplete(@NonNull Task<AuthResult> task) {
-//                if (task.isSuccessful()) {
-//                    FirebaseUser fUser = fAuth.getCurrentUser();
-//                    fUser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
-//                        @Override
-//                        public void onSuccess(@NonNull Void unused) {
-//                            Toast.makeText(ActivityRegistration.this, "Verification mail has been sent!", Toast.LENGTH_LONG).show();
-//                        }
-//                    }).addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            Toast.makeText(ActivityRegistration.this, "Error!" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-//                        }
-//                    });
-//
-//                    Toast.makeText(ActivityRegistration.this, "Registration completed!", Toast.LENGTH_LONG).show();
-//                    userID = fAuth.getCurrentUser().getUid();
-//
+
+        fAuth.createUserWithEmailAndPassword(reg_EDT_email.getEditText().getText().toString(), reg_EDT_password.getEditText().getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    FirebaseUser fUser = fAuth.getCurrentUser();
+                    fUser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(@NonNull Void unused) {
+                            Toast.makeText(RegisterActivity.this, "Verification mail has been sent!", Toast.LENGTH_LONG).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(RegisterActivity.this, "Error!" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                    Toast.makeText(RegisterActivity.this, "Registration completed!", Toast.LENGTH_LONG).show();
+                    userID = fAuth.getCurrentUser().getUid();
+
 //                    User user = new User().
 //                            setEmail(reg_EDT_email.getEditText().getText().toString()).
 //                            setPassword(reg_EDT_password.getEditText().getText().toString()).
@@ -128,12 +136,12 @@ public class RegisterActivity extends AppCompatActivity {
 //                            setDonations(0).setReceived(0);
 //
 //                    myRef.child(userID).setValue(user);
-//                }
-//                else
-//                    Toast.makeText(ActivityRegistration.this, "Error!" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-//            }
-//        });
-//
+                }
+                else
+                    Toast.makeText(RegisterActivity.this, "Error!" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
 //        MyFirebaseDB.setCounter("users_counter", User.getCounter());
 
     }

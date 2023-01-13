@@ -1,14 +1,21 @@
 package com.example.ezgreeting.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ezgreeting.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,22 +32,21 @@ public class MenuActivity extends AppCompatActivity {
     private MaterialTextView menu_TXT_verify;
     private ArrayList<String> greets = new ArrayList<String>();
 
-
-//    private FirebaseAuth fAuth;
+    private FirebaseAuth fAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-//        fAuth = FirebaseAuth.getInstance();
-//        FirebaseUser user = fAuth.getCurrentUser();
+        fAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = fAuth.getCurrentUser();
 
         initGreets();
         findViews();
-//        if (user.isEmailVerified())
-//            initBTNs();
-//        else
-//            notVerified(user);
+        if (user.isEmailVerified())
+            menu_TXT_verify.setVisibility(View.INVISIBLE);
+        else
+            notVerified(user);
         initBTNs();
     }
 
@@ -106,8 +112,6 @@ public class MenuActivity extends AppCompatActivity {
 
     private void initBTNs() {
         menu_BTN_greet.setEnabled(true);
-        menu_TXT_verify.setVisibility(View.INVISIBLE);
-
         menu_BTN_greet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,51 +119,36 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
+
+
     }
 
-//    private void notVerified(FirebaseUser user) {
-//        menu_BTN_share.setEnabled(false);
-//        menu_BTN_receive.setEnabled(false);
-//        menu_TXT_verify.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(@NonNull Void unused) {
-//                        Toast.makeText(ActivityMenu.this, "Verification mail has been sent!", Toast.LENGTH_LONG).show();
-//                        finish();
-//                        Intent intent = new Intent(ActivityMenu.this, ActivityStart.class);
-//                        startActivity(intent);
-//                    }
-//                }).addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Toast.makeText(ActivityMenu.this, "Error!" + e.getMessage(), Toast.LENGTH_LONG).show();
-//                    }
-//                });
-//            }
-//        });
-//    }
+    private void notVerified(FirebaseUser user) {
+        menu_TXT_verify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(@NonNull Void unused) {
+                        Toast.makeText(MenuActivity.this, "Verification mail has been sent!", Toast.LENGTH_LONG).show();
+                        finish();
+                        Intent intent = new Intent(MenuActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MenuActivity.this, "Error!" + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+    }
 
 
     private void greet() {
         int index = (int)(Math.random() * greets.size());
         menu_TXT_output.setText(greets.get(index));
-
-
-//        String input = menu_TXF_input.getText().toString();
-//        CoreNLPSummarizer summarizer = (CoreNLPSummarizer) new CoreNLPSummarizer(input, new MyHTTPInterface() {
-//            @Override
-//            public void myMethod(boolean result) {
-//                if (result == true) {
-////                    Toast.makeText(MenuActivity.this, "Registered successfully!", Toast.LENGTH_LONG).show();
-//                    System.out.println("Worked");
-//                }
-//            }
-//        }).execute();
-
-//        menu_TXT_output.setText(GLOBAL_OUTPUT);
-
     }
 
 

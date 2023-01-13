@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "202281654125",
+    "project_id": "ezgreeting-1b740",
+    "storage_bucket": "ezgreeting-1b740.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:202281654125:android:346ee9ee896dc13498ec64",
+        "android_client_info": {
+          "package_name": "com.example.ezgreeting"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "202281654125-t7iube38qe229mnhkknddvroi50gtsaj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCx2W0JOTfiP9UOM4QnOCKuMWUu3RiGAic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "202281654125-t7iube38qe229mnhkknddvroi50gtsaj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

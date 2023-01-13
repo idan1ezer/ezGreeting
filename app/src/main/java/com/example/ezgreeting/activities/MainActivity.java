@@ -7,13 +7,21 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ezgreeting.R;
+import com.example.ezgreeting.util.Validator;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
     private TextInputLayout start_EDT_email;
@@ -23,35 +31,19 @@ public class MainActivity extends AppCompatActivity {
     private MaterialTextView start_TXT_forgot;
     private TextInputLayout[] loginFields;
 
-//    private FirebaseAuth fAuth;
+    private FirebaseAuth fAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        fAuth = FirebaseAuth.getInstance();
+        fAuth = FirebaseAuth.getInstance();
 
         findViews();
         initBTNs();
-        initCounters();
         checkLoginValidation();
     }
 
-
-    private void initCounters() {
-//        MyFirebaseDB.getCounter("meals_counter", new MyFirebaseDB.CallBack_Counter() {
-//            @Override
-//            public void dataReady(int value) {
-//                Meal.setCounter(value);
-//            }
-//        });
-//        MyFirebaseDB.getCounter("users_counter", new MyFirebaseDB.CallBack_Counter() {
-//            @Override
-//            public void dataReady(int value) {
-//                User.setCounter(value);
-//            }
-//        });
-    }
 
     private void initBTNs() {
         start_BTN_register.setOnClickListener(new View.OnClickListener() {
@@ -72,29 +64,24 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void login() {
-        finish();
-        Intent intent = new Intent(MainActivity.this, MenuActivity.class);
-        startActivity(intent);
-
-
         if (isValid()) {
             String email, password;
             email = start_EDT_email.getEditText().getText().toString().trim();
             password = start_EDT_password.getEditText().getText().toString().trim();
 
-//            fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                @Override
-//                public void onComplete(@NonNull Task<AuthResult> task) {
-//                    if (task.isSuccessful()) {
-//                        Toast.makeText(ActivityStart.this, "Logged in successfully!", Toast.LENGTH_LONG).show();
-//                        finish();
-//                        Intent intent = new Intent(ActivityStart.this, ActivityMenu.class);
-//                        startActivity(intent);
-//                    }
-//                    else
-//                        Toast.makeText(ActivityStart.this, "Email or Password are incorrect!", Toast.LENGTH_LONG).show();
-//                }
-//            });
+            fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(MainActivity.this, "Logged in successfully!", Toast.LENGTH_LONG).show();
+                        finish();
+                        Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+                        startActivity(intent);
+                    }
+                    else
+                        Toast.makeText(MainActivity.this, "Email or Password are incorrect!", Toast.LENGTH_LONG).show();
+                }
+            });
         }
 
         else
@@ -115,23 +102,23 @@ public class MainActivity extends AppCompatActivity {
         passwordResetDialog.setMessage("Enter your email to receive a link for password reset");
         passwordResetDialog.setView(resetMail);
 
-//        passwordResetDialog.setPositiveButton("Send", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                String mail = resetMail.getText().toString();
-//                fAuth.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(@NonNull Void unused) {
-//                        Toast.makeText(ActivityStart.this, "Reset link sent to your mail!", Toast.LENGTH_LONG).show();
-//                    }
-//                }).addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Toast.makeText(ActivityStart.this, "Error!", Toast.LENGTH_LONG).show();
-//                    }
-//                });
-//            }
-//        });
+        passwordResetDialog.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String mail = resetMail.getText().toString();
+                fAuth.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(@NonNull Void unused) {
+                        Toast.makeText(MainActivity.this, "Reset link sent to your mail!", Toast.LENGTH_LONG).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
 
         passwordResetDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
@@ -144,15 +131,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkLoginValidation() {
-//        Validator.Builder
-//                .make(start_EDT_email)
-//                .addWatcher(new Validator.Watcher_Email("Invalid email"))
-//                .build();
-//
-//        Validator.Builder
-//                .make(start_EDT_password)
-//                .addWatcher(new Validator.Watcher_Password("Invalid password"))
-//                .build();
+        Validator.Builder
+                .make(start_EDT_email)
+                .addWatcher(new Validator.Watcher_Email("Invalid email"))
+                .build();
+
+        Validator.Builder
+                .make(start_EDT_password)
+                .addWatcher(new Validator.Watcher_Password("Invalid password"))
+                .build();
     }
 
     private boolean isValid() {
