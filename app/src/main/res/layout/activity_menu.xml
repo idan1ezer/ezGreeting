@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.MenuActivity"
+    android:background="#F9F7F7">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/menu_TXT_welcome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        app:fontFamily="sans-serif-medium"
+        android:textColor="#112D4E"
+        android:textSize="32sp"
+        android:text="ezGreeting"/>
+
+
+    <LinearLayout
+        android:id="@+id/menu_LO_output"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/menu_TXT_welcome"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/menu_TXT_output"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:background="@color/cardview_shadow_end_color"
+            android:text="" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/menu_LO_btns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/menu_LO_output"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/menu_BTN_summary"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="Greet"
+            android:textColor="#112D4E"
+            app:cornerRadius="50dp"
+            app:strokeColor="#112D4E"
+            />
+
+    </LinearLayout>
+
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/menu_TXT_verify"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/menu_LO_btns"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        android:text="Click to verify email"
+        android:textColor="#3F72AF" />
+
+
+
+</RelativeLayout>
