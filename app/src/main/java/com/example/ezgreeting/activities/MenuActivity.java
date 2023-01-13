@@ -2,6 +2,7 @@ package com.example.ezgreeting.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -9,6 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ezgreeting.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.gms.common.internal.Constants;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
@@ -17,6 +27,7 @@ import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
 //import com.google.firebase.auth.FirebaseAuth;
@@ -31,6 +42,8 @@ public class MenuActivity extends AppCompatActivity {
     private MaterialButton menu_BTN_greet;
     private MaterialTextView menu_TXT_verify;
     private ArrayList<String> greets = new ArrayList<String>();
+    private InterstitialAd mInterstitial;
+    private AdView menu_AD_view;
 
     private FirebaseAuth fAuth;
 
@@ -42,12 +55,78 @@ public class MenuActivity extends AppCompatActivity {
         FirebaseUser user = fAuth.getCurrentUser();
 
         initGreets();
+        this.menu_AD_view = new AdView(this);
         findViews();
         if (user.isEmailVerified())
             menu_TXT_verify.setVisibility(View.INVISIBLE);
         else
             notVerified(user);
         initBTNs();
+
+        initInterstitial();
+        AdRequest adRequest = new AdRequest.Builder().build();
+        menu_AD_view.loadAd(adRequest);
+//        initAds();
+
+
+    }
+
+
+
+    private void initInterstitial() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        loadAd();
+    }
+
+
+
+    private void initAds() {
+//        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+//            @Override
+//            public void onInitializationComplete(@NonNull InitializationStatus initializationStatus) {
+//            }
+//        });
+//
+//
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//        menu_AD_view.loadAd(adRequest);
+//        showInterstitial();
+//        loadAd();
+
+    }
+
+    private void showInterstitial() {
+        if (mInterstitial != null) {
+            mInterstitial.show(MenuActivity.this);
+        } else {
+//            Log.d(Constants.TAG, "The interstitial ad wasn't ready yet.");
+        }
+    }
+
+
+    private void loadAd() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        InterstitialAd.load(this, "ca-app-pub-3940256099942544/1033173712", adRequest,
+                new InterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        // The mInterstitialAd reference will be null until
+                        // an ad is loaded.
+                        mInterstitial = interstitialAd;
+//                        Log.i(Constants.TAG, "onAdLoaded");
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        // Handle the error
+//                        Log.d(Constants.TAG, loadAdError.toString());
+                        mInterstitial = null;
+                    }
+                });
     }
 
     private void initGreets() {
@@ -154,6 +233,7 @@ public class MenuActivity extends AppCompatActivity {
 
 
     private void findViews() {
+        menu_AD_view = findViewById(R.id.menu_AD_view);
         menu_TXT_output = findViewById(R.id.menu_TXT_output);
         menu_BTN_greet = findViewById(R.id.menu_BTN_greet);
         menu_TXT_verify = findViewById(R.id.menu_TXT_verify);
