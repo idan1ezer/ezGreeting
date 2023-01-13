@@ -8,6 +8,7 @@
     tools:context=".activities.MenuActivity"
     android:background="#F9F7F7">
 
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/menu_TXT_welcome"
         android:layout_width="match_parent"
@@ -20,14 +21,27 @@
         android:textSize="32sp"
         android:text="ezGreeting"/>
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_SPC_greet"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_below="@id/menu_TXT_welcome"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:scaleType="fitCenter"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/man_waiving_hand"
+        app:lottie_speed="0.75" />
+
 
     <LinearLayout
         android:id="@+id/menu_LO_output"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/menu_TXT_welcome"
-        android:layout_marginTop="50dp"
+        android:layout_below="@id/lottie_SPC_greet"
+        android:layout_marginTop="30dp"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp">
 
@@ -35,6 +49,10 @@
             android:id="@+id/menu_TXT_output"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:textColor="@color/black"
+            android:lines="2"
+            android:textAlignment="center"
+            android:textFontWeight="@integer/material_motion_duration_medium_1"
             android:background="@color/cardview_shadow_end_color"
             android:text="" />
 
@@ -47,12 +65,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@id/menu_LO_output"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/menu_BTN_summary"
+            android:id="@+id/menu_BTN_greet"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -67,13 +85,24 @@
 
     </LinearLayout>
 
+    <ImageButton
+        android:id="@+id/menu_IMG_whatsapp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/whatsapp"
+        android:layout_below="@id/menu_LO_btns"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:background="#F9F7F7">
+    </ImageButton>
+
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/menu_TXT_verify"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/menu_LO_btns"
-        android:layout_marginTop="50dp"
+        android:layout_below="@id/menu_IMG_whatsapp"
+        android:layout_marginTop="30dp"
         android:gravity="center"
         android:text="Click to verify email"
         android:textColor="#3F72AF" />
