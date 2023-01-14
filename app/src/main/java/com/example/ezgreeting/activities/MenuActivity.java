@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -41,6 +42,7 @@ public class MenuActivity extends AppCompatActivity {
     private MaterialTextView menu_TXT_output;
     private MaterialButton menu_BTN_greet;
     private MaterialTextView menu_TXT_verify;
+    private ImageButton menu_IMG_whatsapp;
     private ArrayList<String> greets = new ArrayList<String>();
     private InterstitialAd mInterstitial;
     private AdView menu_AD_view;
@@ -60,12 +62,16 @@ public class MenuActivity extends AppCompatActivity {
         if (user.isEmailVerified())
             menu_TXT_verify.setVisibility(View.INVISIBLE);
         else
+        {
             notVerified(user);
+            initInterstitial();
+            AdRequest adRequest = new AdRequest.Builder().build();
+            menu_AD_view.loadAd(adRequest);
+        }
+
         initBTNs();
 
-        initInterstitial();
-        AdRequest adRequest = new AdRequest.Builder().build();
-        menu_AD_view.loadAd(adRequest);
+
 //        initAds();
 
 
@@ -198,6 +204,26 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
+        menu_IMG_whatsapp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (menu_TXT_output.getText().toString() != "") {
+                    Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
+                    whatsappIntent.setType("text/plain");
+                    whatsappIntent.setPackage("com.whatsapp");
+                    whatsappIntent.putExtra(Intent.EXTRA_TEXT, menu_TXT_output.getText().toString());
+                    try {
+                        startActivity(whatsappIntent);
+                    } catch (android.content.ActivityNotFoundException ex) {
+//                    Toast.makeText(this, "Whatsapp have not been installed.", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+            }
+        });
+
+
+
 
 
     }
@@ -237,5 +263,6 @@ public class MenuActivity extends AppCompatActivity {
         menu_TXT_output = findViewById(R.id.menu_TXT_output);
         menu_BTN_greet = findViewById(R.id.menu_BTN_greet);
         menu_TXT_verify = findViewById(R.id.menu_TXT_verify);
+        menu_IMG_whatsapp = findViewById(R.id.menu_IMG_whatsapp);
     }
 }
