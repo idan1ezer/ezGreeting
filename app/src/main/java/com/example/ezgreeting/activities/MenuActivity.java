@@ -1,5 +1,6 @@
 package com.example.ezgreeting.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,14 +12,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ezgreeting.R;
+import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.OnUserEarnedRewardListener;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.gms.ads.rewarded.RewardItem;
+import com.google.android.gms.ads.rewarded.RewardedAd;
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 import com.google.android.gms.common.internal.Constants;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -46,8 +53,10 @@ public class MenuActivity extends AppCompatActivity {
     private ArrayList<String> greets = new ArrayList<String>();
     private InterstitialAd mInterstitial;
     private AdView menu_AD_view;
-
+    private RewardedAd mRewardedAd;
     private FirebaseAuth fAuth;
+
+    private boolean isUserVerified;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +64,12 @@ public class MenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_menu);
         fAuth = FirebaseAuth.getInstance();
         FirebaseUser user = fAuth.getCurrentUser();
+        isUserVerified = user.isEmailVerified();
 
         initGreets();
         this.menu_AD_view = new AdView(this);
         findViews();
-        if (user.isEmailVerified())
+        if (isUserVerified)
             menu_TXT_verify.setVisibility(View.INVISIBLE);
         else
         {
@@ -86,6 +96,7 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
         loadAd();
+        loadRewardAd();
     }
 
 
@@ -252,8 +263,91 @@ public class MenuActivity extends AppCompatActivity {
 
 
     private void greet() {
+        if(!isUserVerified) {
+            showRewardAd();
+            System.out.println("im here");
+        }
+
         int index = (int)(Math.random() * greets.size());
         menu_TXT_output.setText(greets.get(index));
+    }
+
+    private void loadRewardAd() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        RewardedAd.load(this, "ca-app-pub-3940256099942544/5224354917",
+                adRequest, new RewardedAdLoadCallback() {
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        // Handle the error.
+                        System.out.println("failed");
+//                            Log.d(TAG, loadAdError.toString());
+                        mRewardedAd = null;
+                    }
+
+                    @Override
+                    public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
+                        mRewardedAd = rewardedAd;
+                        System.out.println("i got right here!");
+                        mRewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                            @Override
+                            public void onAdClicked() {
+                                // Called when a click is recorded for an ad.
+                                System.out.println("here 2");
+//                                    Log.d(TAG, "Ad was clicked.");
+                            }
+
+                            @Override
+                            public void onAdDismissedFullScreenContent() {
+                                // Called when ad is dismissed.
+                                // Set the ad reference to null so you don't show the ad a second time.
+                                System.out.println("here 3");
+//                                    Log.d(TAG, "Ad dismissed fullscreen content.");
+                                mRewardedAd = null;
+                            }
+
+                            @Override
+                            public void onAdFailedToShowFullScreenContent(AdError adError) {
+                                // Called when ad fails to show.
+                                System.out.println("failed 2");
+//                                    Log.e(TAG, "Ad failed to show fullscreen content.");
+                                mRewardedAd = null;
+                            }
+
+                            @Override
+                            public void onAdImpression() {
+                                // Called when an impression is recorded for an ad.
+//                                    Log.d(TAG, "Ad recorded an impression.");
+                            }
+
+                            @Override
+                            public void onAdShowedFullScreenContent() {
+                                System.out.println("where");
+                                // Called when ad is shown.
+//                                    Log.d(TAG, "Ad showed fullscreen content.");
+                            }
+                        });
+//                            Log.d(TAG, "Ad was loaded.");
+                    }
+                });
+    }
+
+    private void showRewardAd() {
+        if (mRewardedAd != null) {
+            System.out.println("heressss");
+            Activity activityContext = MenuActivity.this;
+            mRewardedAd.show(activityContext, new OnUserEarnedRewardListener() {
+                @Override
+                public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+                    // Handle the reward.
+//                    Log.d(TAG, "The user earned the reward.");
+                    int rewardAmount = rewardItem.getAmount();
+                    String rewardType = rewardItem.getType();
+                }
+            });
+        } else {
+            System.out.println("failed 55");
+//            Log.d(TAG, "The rewarded ad wasn't ready yet.");
+        }
     }
 
 
