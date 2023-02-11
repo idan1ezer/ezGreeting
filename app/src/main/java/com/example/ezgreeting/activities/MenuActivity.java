@@ -26,16 +26,14 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
-import com.google.android.gms.common.internal.Constants;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
 //import com.google.firebase.auth.FirebaseAuth;
@@ -55,6 +53,7 @@ public class MenuActivity extends AppCompatActivity {
     private AdView menu_AD_view;
     private RewardedAd mRewardedAd;
     private FirebaseAuth fAuth;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     private boolean isUserVerified;
 
@@ -63,6 +62,7 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         fAuth = FirebaseAuth.getInstance();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         FirebaseUser user = fAuth.getCurrentUser();
         isUserVerified = user.isEmailVerified();
 
@@ -100,21 +100,6 @@ public class MenuActivity extends AppCompatActivity {
     }
 
 
-
-    private void initAds() {
-//        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-//            @Override
-//            public void onInitializationComplete(@NonNull InitializationStatus initializationStatus) {
-//            }
-//        });
-//
-//
-//        AdRequest adRequest = new AdRequest.Builder().build();
-//        menu_AD_view.loadAd(adRequest);
-//        showInterstitial();
-//        loadAd();
-
-    }
 
     private void showInterstitial() {
         if (mInterstitial != null) {
@@ -268,6 +253,8 @@ public class MenuActivity extends AppCompatActivity {
             System.out.println("im here");
         }
 
+        logEventGreet();
+
         int index = (int)(Math.random() * greets.size());
         menu_TXT_output.setText(greets.get(index));
     }
@@ -287,7 +274,6 @@ public class MenuActivity extends AppCompatActivity {
                     @Override
                     public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
                         mRewardedAd = rewardedAd;
-                        System.out.println("i got right here!");
                         mRewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                             @Override
                             public void onAdClicked() {
@@ -333,13 +319,12 @@ public class MenuActivity extends AppCompatActivity {
 
     private void showRewardAd() {
         if (mRewardedAd != null) {
-            System.out.println("heressss");
             Activity activityContext = MenuActivity.this;
             mRewardedAd.show(activityContext, new OnUserEarnedRewardListener() {
                 @Override
                 public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
                     // Handle the reward.
-//                    Log.d(TAG, "The user earned the reward.");
+                    Log.d("com.example.ezgreeting", "The user earned the reward.");
                     int rewardAmount = rewardItem.getAmount();
                     String rewardType = rewardItem.getType();
                 }
@@ -348,6 +333,16 @@ public class MenuActivity extends AppCompatActivity {
             System.out.println("failed 55");
 //            Log.d(TAG, "The rewarded ad wasn't ready yet.");
         }
+    }
+
+    private void logEventGreet() {
+        Bundle bundle = new Bundle();
+        bundle.putString("generate_greet", "Greet");
+        if(!isUserVerified) {
+            bundle.putString("reward_ad", "RewardAd Shown");
+        }
+        mFirebaseAnalytics.logEvent("greeting", bundle);
+        Log.d("logEvent", "log event sent");
     }
 
 
