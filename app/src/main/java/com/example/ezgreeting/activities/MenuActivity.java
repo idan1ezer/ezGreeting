@@ -204,6 +204,7 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (menu_TXT_output.getText().toString() != "") {
+                    logEventShare();
                     Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
                     whatsappIntent.setType("text/plain");
                     whatsappIntent.setPackage("com.whatsapp");
@@ -217,11 +218,6 @@ public class MenuActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-
-
     }
 
     private void notVerified(FirebaseUser user) {
@@ -250,7 +246,6 @@ public class MenuActivity extends AppCompatActivity {
     private void greet() {
         if(!isUserVerified) {
             showRewardAd();
-            System.out.println("im here");
         }
 
         logEventGreet();
@@ -278,24 +273,21 @@ public class MenuActivity extends AppCompatActivity {
                             @Override
                             public void onAdClicked() {
                                 // Called when a click is recorded for an ad.
-                                System.out.println("here 2");
-//                                    Log.d(TAG, "Ad was clicked.");
+                                    Log.d("add_clicked", "Ad was clicked.");
                             }
 
                             @Override
                             public void onAdDismissedFullScreenContent() {
                                 // Called when ad is dismissed.
                                 // Set the ad reference to null so you don't show the ad a second time.
-                                System.out.println("here 3");
-//                                    Log.d(TAG, "Ad dismissed fullscreen content.");
+                                    Log.d("ad_dismissed", "Ad dismissed fullscreen content.");
                                 mRewardedAd = null;
                             }
 
                             @Override
                             public void onAdFailedToShowFullScreenContent(AdError adError) {
                                 // Called when ad fails to show.
-                                System.out.println("failed 2");
-//                                    Log.e(TAG, "Ad failed to show fullscreen content.");
+                                    Log.e("ad_failed", "Ad failed to show fullscreen content.");
                                 mRewardedAd = null;
                             }
 
@@ -307,12 +299,11 @@ public class MenuActivity extends AppCompatActivity {
 
                             @Override
                             public void onAdShowedFullScreenContent() {
-                                System.out.println("where");
                                 // Called when ad is shown.
-//                                    Log.d(TAG, "Ad showed fullscreen content.");
+                                    Log.d("ad_fullscreen", "Ad showed fullscreen content.");
                             }
                         });
-//                            Log.d(TAG, "Ad was loaded.");
+                            Log.d("ad_loaded", "Ad was loaded.");
                     }
                 });
     }
@@ -324,14 +315,13 @@ public class MenuActivity extends AppCompatActivity {
                 @Override
                 public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
                     // Handle the reward.
-                    Log.d("com.example.ezgreeting", "The user earned the reward.");
+                    Log.d("earned_reward", "The user earned the reward.");
                     int rewardAmount = rewardItem.getAmount();
                     String rewardType = rewardItem.getType();
                 }
             });
         } else {
-            System.out.println("failed 55");
-//            Log.d(TAG, "The rewarded ad wasn't ready yet.");
+            Log.d("ad_reward_fail", "The rewarded ad wasn't ready yet.");
         }
     }
 
@@ -342,7 +332,21 @@ public class MenuActivity extends AppCompatActivity {
             bundle.putString("reward_ad", "RewardAd Shown");
         }
         mFirebaseAnalytics.logEvent("greeting", bundle);
-        Log.d("logEvent", "log event sent");
+        Log.d("logEvent", "Greet log event sent");
+    }
+
+    private void logEventShare() {
+        Bundle bundle = new Bundle();
+        bundle.putString("generate_share", "Share");
+        mFirebaseAnalytics.logEvent("sharing", bundle);
+        Log.d("logEvent", "Share log event sent");
+    }
+
+    private void logEventVerifyClicked() {
+        Bundle bundle = new Bundle();
+        bundle.putString("verify_clicked", "Verify");
+        mFirebaseAnalytics.logEvent("verifying", bundle);
+        Log.d("logEvent", "Verify log event sent");
     }
 
 
